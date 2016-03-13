@@ -101,11 +101,13 @@
   function visualise(procedure) {
     drawSvg();
     
-    var dataToVisualise;
+    var min, max, avg, xScale; 
 
     for(var i = 0; i < spreadsheet.length; i++) {
       if(spreadsheet[i].Procedure === procedure) {
-        dataToVisualise = spreadsheet[i];
+        min = spreadsheet[i]["Min Bribes"]; 
+        max = spreadsheet[i]["Max Bribes"];
+        avg = spreadsheet[i]["Avg Bribes"];
       }
     }
     console.log(dataToVisualise);
