@@ -2,32 +2,16 @@
 
   "use strict";
 
-  var height, width, svg, spreadsheet, svgExistsInDOM = false; 
+  // GLOBAL to APPLICATION VARIABLES ------------- 
+  var height, width, svg, spreadsheet, min, max, avg, xScale, userBribeAmout, bgRect, fgRect, svgExistsInDOM = false, visInit = false; 
 
-  function getViewportDimensions() { 
-    width = document.getElementById("main").offsetWidth * 0.90;
-    height = window.innerHeight * 0.4;
+  var rectOpts = {
+    "x": 0, 
+    "y" : "25%",
+    "height" : 5
   };
 
-  getViewportDimensions();
-
-  function drawSvg() {
-    if(svgExistsInDOM === false) {
-      svg = d3.select("#main")
-        .append("svg");
-        svgExistsInDOM = true; 
-        setSvgSize();
-    }
-    else setSvgSize();
-  }
-
-  function setSvgSize() {
-    svg
-      .attr({
-        width: width,
-        height: height
-      });
-  }
+  // REQUEST CSV ------------- 
 
   function requestData() {
     d3.csv("data/data.csv", function(data){
@@ -40,6 +24,8 @@
     });
   }
   requestData();
+
+  // UI BUILDER FUNCTIONS ------------- 
 
   function createSelect() {
     var main = document.getElementById("main");
@@ -85,24 +71,68 @@
 
     submit.addEventListener("click", function() {
       var select = document.getElementById("bribeSelector");
-      var selected = select.options[select.selectedIndex].value;
-      return (input.value > 0) ? visualise(selected) : alert("Please enter the bribe you had to pay.");
+      var selectedProcedure = select.options[select.selectedIndex].value;
+      var input = document.getElementById("bribeInputControl");
+      userBribeAmout = input.value; 
+      return (input.value > 0) ? visualise(selectedProcedure,userBribeAmout) : alert("Please enter the bribe you had to pay.");
     });
     submit.addEventListener("keydown", function (event) {
       var select = document.getElementById("bribeSelector");
-      var selected = select.options[select.selectedIndex].value;
+      var selectedProcedure = select.options[select.selectedIndex].value;
+      userBribeAmout = input.value; 
       var key = event.which || event.keyCode;
       if ((key === 13) || (key === 32)) {
-        return (input.value > 0) ? visualise(selected) : alert("Please enter the bribe you had to pay.");
+        return (input.value > 0) ? visualise(selectedProcedure,userBribeAmout) : alert("Please enter the bribe you had to pay.");
       }
     });    
   }
 
-  function visualise(procedure) {
+  // VISUALISATION FUNCTIONS ------------- 
+
+ function getViewportDimensions() { 
+    width = document.getElementById("main").offsetWidth * 0.90;
+    height = window.innerHeight * 0.4;
+  }
+
+  getViewportDimensions();
+
+  function drawSvg() {
+    if(svgExistsInDOM === false) {
+      svg = d3.select("#main")
+        .append("svg");
+        svgExistsInDOM = true; 
+        setSvgSize();
+    }
+    else setSvgSize();
+  }
+
+  function setSvgSize() {
+    svg
+      .attr({
+        width: width,
+        height: height
+      });
+  }
+
+  // draw the bgRect
+  function backgroundRect() {
+    bgRect = svg.append("rect")
+      .attr({
+        "id": "background",
+        "width": width, 
+        "fill" : "#989798",
+      })
+      .attr(rectOpts);
+    visInit = true;
+  }
+
+  function visualise(procedure, userAmount) {
+
+    var arr = [];
+    arr.push(parseInt(userAmount));
+
     drawSvg();
     
-    var min, max, avg, xScale; 
-
     for(var i = 0; i < spreadsheet.length; i++) {
       if(spreadsheet[i].Procedure === procedure) {
         min = spreadsheet[i]["Min Bribes"]; 
@@ -110,10 +140,34 @@
         avg = spreadsheet[i]["Avg Bribes"];
       }
     }
-    console.log(dataToVisualise);
+   
+    xScale = d3.scale.linear()
+      .domain([min, max])
+      .range([0, width]);
 
+    // append the background rect if it's not in the DOM
+    if(visInit === false) {
+      backgroundRect();
+    }
+
+    fgRect = d3.select("svg");
+
+    fgRect = fgRect.selectAll("svg rect#foreground")
+      .data(arr)
+      .enter()
+      .append("rect")
+      .attr(rectOpts)
+      .attr({
+        "width": function(d) {
+          return xScale(d);
+        }, 
+        "fill" : "fff",
+        "id" : "foreground"
+      });
+  
   }
 
+  // RESIZE FUNCTIONS ------------- 
 
   d3.select(window).on('resize', resize);
 
@@ -122,9 +176,26 @@
     getViewportDimensions();
     setSvgSize();
 
+    // adjust the rect scale
+    xScale 
+      .range([0, width]);
+
+    // adjust the background rect size
+    bgRect
+      .attr("width", width);
+
+    // adjust the foreground rect size
+    fgRect
+      .attr({
+        "width": function(d) {
+          return xScale(d);
+        }
+      })
+
   }
 
-  // fastclick
+  // FASTCLICK ------------- 
+
   if ('addEventListener' in document) {
     document.addEventListener('DOMContentLoaded', function() {
       FastClick.attach(document.body);
