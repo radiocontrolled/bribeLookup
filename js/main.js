@@ -164,6 +164,9 @@
         "fill" : "fff",
         "id" : "foreground"
       });
+
+    // to do 
+
   
   }
 
@@ -190,7 +193,7 @@
         "width": function(d) {
           return xScale(d);
         }
-      })
+      });
 
   }
 
