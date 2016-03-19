@@ -4,7 +4,7 @@
 
   // GLOBAL to APPLICATION VARIABLES ------------- 
   var height, width, svg, spreadsheet, min, max, avg, xScale, userBribeAmout, bgRect, fgRect, svgExistsInDOM = false, 
-  visInit = false, bgMinLabel, bgMaxLabel;
+  visInit = false, bgMinLabel, bgMaxLabel, fgLabel;
 
   var rectOpts = {
     "x": 0, 
@@ -13,7 +13,7 @@
   };
 
   var labelOpts = {
-    "y" : "23%"
+    "y" : "22%"
   };
 
   // REQUEST CSV ------------- 
@@ -229,6 +229,7 @@
           "x" : width, 
           "text-anchor" : "end"
         });
+
       
     }
 
