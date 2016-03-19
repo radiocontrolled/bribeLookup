@@ -43,16 +43,32 @@
     }
   }
 
+  function createInputLabel() {
+    var main = document.getElementById("uicontrol");
+    var label = document.createElement("label");
+    label.for = "bribeInputControl";
+    label.id = "bribeInputLabel";
+    label.innerHTML = "The bribe I had to pay was:";
+    main.appendChild(label);
+  }
+
+  
   function createInput() {
+    
+    createInputLabel();
+
     var main = document.getElementById("uicontrol");
     var select = document.getElementById("bribeSelector");
     var input = document.createElement("input");
+    var bribeInputLabel = document.getElementById("bribeInputLabel");
     input.id = "bribeInputControl";
     input.type = "number";
     input.name = "bribeInput";
     input.min = 1000; 
     input.max = 10000000;
-    main.insertBefore(input, select.nextSibling);
+
+    main.insertBefore(input, bribeInputLabel.nextSibling);
+    
   }
 
   function createSubmit() {
