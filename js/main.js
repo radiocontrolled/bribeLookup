@@ -131,6 +131,7 @@
     var arr = [];
     arr.push(parseInt(userAmount));
 
+
     drawSvg();
     
     for(var i = 0; i < spreadsheet.length; i++) {
@@ -145,28 +146,40 @@
       .domain([min, max])
       .range([0, width]);
 
+
     // append the background rect if it's not in the DOM
     if(visInit === false) {
       backgroundRect();
     }
 
-    fgRect = d3.select("svg");
+    function update() {
 
-    fgRect = fgRect.selectAll("svg rect#foreground")
-      .data(arr)
-      .enter()
-      .append("rect")
-      .attr(rectOpts)
-      .attr({
-        "width": function(d) {
-          return xScale(d);
-        }, 
-        "fill" : "fff",
-        "id" : "foreground"
-      });
+      // select rectangle & bind data
+      fgRect = svg.selectAll("rect#foreground")
+        .data(arr);
+        
+      // enter rect element 
+      fgRect.enter()
+        .append("rect");
 
-    // to do 
+      // update rect element
+      fgRect
+        .attr(rectOpts)
+        .attr({
+          "fill" : "fff",
+          "id" : "foreground",
+          "width" : 0
+        })
+        .transition()
+        .duration(1000)
+        .attr({
+         "width": function(d) {
+            return xScale(d);
+          } 
+        });
+    }
 
+    update();
   
   }
 
