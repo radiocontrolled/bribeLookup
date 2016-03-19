@@ -17,11 +17,16 @@
 body {
   .serif;
   background: #eee;
+  line-height: 1.6;
 }
 
-svg {
+// text {
+//   overflow: visible!important;
+// }
 
-}
+// svg {
+//   border: 1px solid red; 
+// }
 
 select {
   display: block;
@@ -32,14 +37,20 @@ label {
   display: block;
 }
 
-p {
+p#submit  {
   background: @red;
   display: inline-block;
   color: @white;
-  padding: 0.25em 0.5em 0.25em 0.5em;
+  padding: 0 0.5em 0 0.5em;
   margin: 0.25em; 
   border: 1px solid @red;
   transition: all 0.25s; 
+}
+
+p.info {
+  background: #eee;
+  color: #333;
+  border: none;
 }
 
 p#submit:active,
@@ -64,6 +75,22 @@ p#submit:hover {
   text-decoration: underline;
 }
 
+
+/* Info section */ 
+
+.infoSpan {
+  background: @lightBlue; 
+  color: @white;
+  padding: 0 0.25em 0 0.25em;
+}
+#userAmount,
+#userProcedure,
+#dataAvgBribe {
+ 
+}
+
+/* media queries */
+
 @media (max-width: 767px)  {
   select {
     width: 90%;
@@ -75,12 +102,15 @@ p#submit:hover {
     margin-bottom: 1em;
   }
   h1 {
-    font-size: 1.65em;
-    font-weight: 800;
+    font-size: 1.35em;
+    font-weight: 900;
   }
   .col-md-4, 
   .col-md-8 {
     padding-left: 0; 
     padding-right: 0;
+  }
+  .footer {
+    font-size: 10px;
   }
 }

@@ -7,16 +7,20 @@
     <link href='css/style.css' rel='stylesheet'/>
     <script src="bower_components/d3/d3.min.js"></script>
     <script src="bower_components/fastclick/lib/fastclick.js"></script>
-    <title>How did your bribe compare?</title>
+    <title>How does your bribe compare?</title>
   </head>
   <body>
     <div class="container">
       <div class="col-md-4" id="uicontrol">
-        <h1>How did your bribe compare?</h1>
+        <h1>How does your bribe compare?</h1>
         <label for="bribeSelector">The procedure I had to bribe for was:</label>
       </div>
       <div class="col-md-8" id="main">
         <!-- vis -->
+      </div>
+      <div class="col-md-8 col-md-offset-4" id="info">
+        <p class="info">Your bribe of <span id="userAmount" class="infoSpan"></span> was <span id="infoAmount" class="infoSpan"></span>
+         <span id="lessThanMoreThan" ></span> the average bribe for <span id="userProcedure" class="infoSpan"></span>, which was <span id="dataAvgBribe" class="infoSpan"></span>.</p>  
       </div>
     </div>
 

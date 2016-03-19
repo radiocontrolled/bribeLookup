@@ -4,7 +4,7 @@
 
   // GLOBAL to APPLICATION VARIABLES ------------- 
   var height, width, svg, spreadsheet, min, max, avg, xScale, userBribeAmout, bgRect, fgRect, svgExistsInDOM = false, 
-  visInit = false, bgMinLabel, bgMaxLabel, fgLabel;
+  visInit = false, bgMinLabel, bgMaxLabel, fgLabel, fgLine;
 
   var rectOpts = {
     "x": 0, 
@@ -53,7 +53,7 @@
     var label = document.createElement("label");
     label.for = "bribeInputControl";
     label.id = "bribeInputLabel";
-    label.innerHTML = "The bribe I had to pay (in Lebanese pounds) was:";
+    label.innerHTML = "The bribe I had to pay (in LBP) was:";
     main.appendChild(label);
   }
 
@@ -108,6 +108,50 @@
     });    
   }
 
+  // INFO FUNCTIONS to update the explanation section ------------- 
+
+  function updateInfoDiv(userAmount, procedure, avg, min, max) {
+    var userAmountSpan = document.getElementById("userAmount");
+    var userAmountProcedure = document.getElementById("userProcedure");
+    var dataAverageBribe = document.getElementById("dataAvgBribe");
+    var informationAmount = document.getElementById("infoAmount");
+    var lessGreaterEqual = document.getElementById("lessThanMoreThan");
+
+  
+    var calc = calculate(userAmount, avg);
+
+    userAmountSpan.innerHTML = userAmount + "LBP";
+    userAmountProcedure.innerHTML = procedure;
+    dataAverageBribe.innerHTML = avg + "LBP";
+    informationAmount.innerHTML = calc.amount; 
+    lessGreaterEqual.innerHTML = calc.lge; 
+
+  }
+
+  function calculate(userAmount, avg) {
+
+    var obj = {};
+
+    if(userAmount > avg) {
+      obj.lge = "greater than "; 
+      obj.amount = userAmount - avg + "LBP";
+    }
+    
+    else if(userAmount < avg) {
+      obj.lge = "less than "; 
+      obj.amount = avg - userAmount + "LBP";
+    }
+
+    else {
+      obj.lge = "equal to";
+      obj.amount = "";
+    }
+
+    return obj; 
+    
+  }
+  
+
   // VISUALISATION FUNCTIONS ------------- 
 
  function getViewportDimensions() { 
@@ -152,7 +196,6 @@
     var arr = [];
     arr.push(parseInt(userAmount));
 
-
     drawSvg();
     
     for(var i = 0; i < spreadsheet.length; i++) {
@@ -176,6 +219,7 @@
       bgMaxLabel = svg.append("g")
         .classed("end", "true")
         .append("text");
+    
     }
 
        
@@ -208,8 +252,70 @@
           } 
         });
 
+      // Foreground bars label ------------- 
+      
+      // select line labelling the user's bribe
+      fgLine = svg.selectAll("line")
+        .data(arr);
 
-       // Labels ------------- 
+      // enter the line 
+      fgLine.enter()
+        .append("line");
+
+      // updaate the line element
+      fgLine
+        .attr({
+          "x1" : 0, 
+          "y1" : "25%",
+          "x2" : 0, 
+          "y2" : "35%", 
+          "stroke" : "black",
+          "stroke-width" : 1
+        })
+        .transition()
+        .duration(1000)
+        .attr({
+          "x1" : function(d) {
+            return xScale(d);
+          }, 
+          "x2" : function(d) {
+            return xScale(d);
+          } 
+        });
+
+      // select the label holding the user's bribe input amount
+      fgLabel = svg.selectAll("text.avg")
+        .data(arr);
+
+      // enter the label
+      fgLabel
+        .enter()
+        .append("text");
+
+      // update the label 
+
+      fgLabel
+        .text(function(){
+          // return userAmount;
+          return "My bribe";
+        })
+        .attr({
+          "y" : "40%",
+          "x" : 0,
+          "text-anchor" : "middle",
+          "class" : "avg"
+        })
+        .transition()
+        .duration(1000)
+        .attr({
+          "x" : function(d) {
+            return xScale(d);
+          }
+        });
+
+
+
+       // Background Bars Labels ------------- 
 
        bgMinLabel
         .text(function(){
@@ -236,6 +342,8 @@
     update();
 
    
+    // Udate the text info section
+    updateInfoDiv(parseInt(userAmount), procedure, avg);
 
    
 
@@ -267,12 +375,31 @@
         }
       });
 
+    // adjust the foreground rect label 
+    fgLine
+      .attr({
+        "x1" : function(d) {
+          return xScale(d);
+        }, 
+        "x2" : function(d) {
+          return xScale(d);
+        } 
+      });
+
+
     // adjust the background rect label 
     bgMaxLabel 
       .attr({
-        "x" : width, 
-        "text-anchor" : "end"
-      })
+        "x" : width
+      });
+
+    // adjust the foreground rect label
+    fgLabel
+      .attr({
+        "x" : function(d) {
+          return xScale(d);
+        }
+      });
     
   }
 
