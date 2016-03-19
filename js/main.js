@@ -3,12 +3,17 @@
   "use strict";
 
   // GLOBAL to APPLICATION VARIABLES ------------- 
-  var height, width, svg, spreadsheet, min, max, avg, xScale, userBribeAmout, bgRect, fgRect, svgExistsInDOM = false, visInit = false; 
+  var height, width, svg, spreadsheet, min, max, avg, xScale, userBribeAmout, bgRect, fgRect, svgExistsInDOM = false, 
+  visInit = false, bgMinLabel, bgMaxLabel;
 
   var rectOpts = {
     "x": 0, 
     "y" : "25%",
     "height" : 5
+  };
+
+  var labelOpts = {
+    "y" : "23%"
   };
 
   // REQUEST CSV ------------- 
@@ -48,7 +53,7 @@
     var label = document.createElement("label");
     label.for = "bribeInputControl";
     label.id = "bribeInputLabel";
-    label.innerHTML = "The bribe I had to pay was:";
+    label.innerHTML = "The bribe I had to pay (in Lebanese pounds) was:";
     main.appendChild(label);
   }
 
@@ -166,9 +171,18 @@
     // append the background rect if it's not in the DOM
     if(visInit === false) {
       backgroundRect();
+
+      bgMinLabel = svg.append("text");
+      bgMaxLabel = svg.append("g")
+        .classed("end", "true")
+        .append("text");
     }
 
+       
+
     function update() {
+
+      // Bars ------------- 
 
       // select rectangle & bind data
       fgRect = svg.selectAll("rect#foreground")
@@ -193,9 +207,37 @@
             return xScale(d);
           } 
         });
+
+
+       // Labels ------------- 
+
+       bgMinLabel
+        .text(function(){
+          return min;
+        })
+        .attr(labelOpts)
+        .attr({
+          "x" : 0
+        });
+
+       bgMaxLabel
+        .text(function(){
+          return max;
+        })
+        .attr(labelOpts)
+        .attr({
+          "x" : width, 
+          "text-anchor" : "end"
+        });
+      
     }
 
     update();
+
+   
+
+   
+
   
   }
 
@@ -224,6 +266,13 @@
         }
       });
 
+    // adjust the background rect label 
+    bgMaxLabel 
+      .attr({
+        "x" : width, 
+        "text-anchor" : "end"
+      })
+    
   }
 
   // FASTCLICK ------------- 
