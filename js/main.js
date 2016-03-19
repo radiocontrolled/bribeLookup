@@ -8,12 +8,12 @@
 
   var rectOpts = {
     "x": 0, 
-    "y" : "25%",
+    "y" : 12,
     "height" : 5
   };
 
   var labelOpts = {
-    "y" : "22%"
+    "y" : 8
   };
 
   // REQUEST CSV ------------- 
@@ -116,6 +116,7 @@
     var dataAverageBribe = document.getElementById("dataAvgBribe");
     var informationAmount = document.getElementById("infoAmount");
     var lessGreaterEqual = document.getElementById("lessThanMoreThan");
+    var info = document.getElementById("info");
 
   
     var calc = calculate(userAmount, avg);
@@ -125,6 +126,7 @@
     dataAverageBribe.innerHTML = avg + "LBP";
     informationAmount.innerHTML = calc.amount; 
     lessGreaterEqual.innerHTML = calc.lge; 
+    info.style.display = "block";
 
   }
 
@@ -156,7 +158,7 @@
 
  function getViewportDimensions() { 
     width = document.getElementById("main").offsetWidth * 0.90;
-    height = window.innerHeight * 0.4;
+    height = window.innerHeight * 0.15;
   }
 
   getViewportDimensions();
@@ -266,9 +268,9 @@
       fgLine
         .attr({
           "x1" : 0, 
-          "y1" : "25%",
+          "y1" : 12,
           "x2" : 0, 
-          "y2" : "35%", 
+          "y2" : 35, 
           "stroke" : "black",
           "stroke-width" : 1
         })
@@ -300,7 +302,7 @@
           return "My bribe";
         })
         .attr({
-          "y" : "40%",
+          "y" : 48,
           "x" : 0,
           "text-anchor" : "middle",
           "class" : "avg"
