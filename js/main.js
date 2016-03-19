@@ -28,7 +28,7 @@
   // UI BUILDER FUNCTIONS ------------- 
 
   function createSelect() {
-    var main = document.getElementById("main");
+    var main = document.getElementById("uicontrol");
     var select = document.createElement("select");
     select.id = "bribeSelector";
     main.appendChild(select);
@@ -44,7 +44,7 @@
   }
 
   function createInput() {
-    var main = document.getElementById("main");
+    var main = document.getElementById("uicontrol");
     var select = document.getElementById("bribeSelector");
     var input = document.createElement("input");
     input.id = "bribeInputControl";
@@ -56,7 +56,7 @@
   }
 
   function createSubmit() {
-    var main = document.getElementById("main");
+    var main = document.getElementById("uicontrol");
     var input = document.getElementById("bribeInputControl");
     var submit = document.createElement("p");
     submit.id = "submit";
