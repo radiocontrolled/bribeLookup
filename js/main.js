@@ -4,16 +4,16 @@
 
   // GLOBAL to APPLICATION VARIABLES ------------- 
   var height, width, svg, spreadsheet, min, max, avg, xScale, userBribeAmout, bgRect, fgRect, svgExistsInDOM = false, 
-  visInit = false, bgMinLabel, bgMaxLabel, fgLabel, fgLine;
+  visInit = false, bgMinLabel, bgMaxLabel, fgLabel, fgLine, avgRect, avgRectLine, avgRectLabel; 
 
   var rectOpts = {
     "x": 0, 
-    "y" : 12,
+    "y" : 31,
     "height" : 5
   };
 
   var labelOpts = {
-    "y" : 8
+    "y" : 25
   };
 
   // REQUEST CSV ------------- 
@@ -195,11 +195,9 @@
 
   function visualise(procedure, userAmount) {
 
+    var average = [];
     var arr = [];
-    arr.push(parseInt(userAmount));
 
-    drawSvg();
-    
     for(var i = 0; i < spreadsheet.length; i++) {
       if(spreadsheet[i].Procedure === procedure) {
         min = spreadsheet[i]["Min Bribes"]; 
@@ -207,6 +205,12 @@
         avg = spreadsheet[i]["Avg Bribes"];
       }
     }
+
+    average.push(parseInt(avg));
+    arr.push(parseInt(userAmount));
+
+    drawSvg();
+     
    
     xScale = d3.scale.linear()
       .domain([min, max])
@@ -221,14 +225,99 @@
       bgMaxLabel = svg.append("g")
         .classed("end", "true")
         .append("text");
-    
     }
 
        
 
     function update() {
 
-      // Bars ------------- 
+
+      // Average (background) bribe ------------- 
+
+      // select rectangele & bind data
+      avgRect = svg.selectAll("rect#average")
+        .data(average);
+
+      avgRect.enter() 
+        .append("rect");
+
+      avgRect
+        .attr(rectOpts)
+        .attr({
+          "id" : "average",
+          "width" : 0, 
+          "fill" : "#d91f2b"
+        })
+        .transition()
+        .duration(1000)
+        .attr({
+         "width": function(d) {
+            return xScale(d);
+          } 
+        });
+
+      // Average (background) line ------------- 
+      avgRectLine = svg.selectAll("line#avgLine")
+        .data(average);
+
+      // enter the line 
+      avgRectLine.enter()
+        .append("line");
+
+      // updaate the line element
+      avgRectLine
+        .attr({
+          "x1" : 0, 
+          "y1" : 13,
+          "x2" : 0, 
+          "y2" : 36, 
+          "stroke" : "#d91f2b",
+          "stroke-width" : 1, 
+          "id" : "avgLine"
+        })
+        .transition()
+        .duration(1000)
+        .attr({
+          "x1" : function(d) {
+            return xScale(d);
+          }, 
+          "x2" : function(d) {
+            return xScale(d);
+          } 
+        });
+
+      // Average (background) label ------------- 
+      
+      avgRectLabel  = svg.selectAll("text.bribeAverage")
+        .data(average);
+
+      // enter the labelling
+      avgRectLabel 
+        .enter()
+        .append("text");
+
+      // update the label 
+      avgRectLabel 
+        .text(function(){
+          return "Average";
+        })
+        .attr({
+          "y" : 10,
+          "x" : 0,
+          // "fill" : "#d91f2b",
+          "text-anchor" : "middle",
+          "class" : "bribeAverage"
+        })
+        .transition()
+        .duration(1000)
+        .attr({
+          "x" : function(d) {
+            return xScale(d);
+          }
+        });
+
+
+      // User (foreground) bribe ------------- 
 
       // select rectangle & bind data
       fgRect = svg.selectAll("rect#foreground")
@@ -254,10 +343,10 @@
           } 
         });
 
-      // Foreground bars label ------------- 
+      // User (foreground) bars label ------------- 
       
       // select line labelling the user's bribe
-      fgLine = svg.selectAll("line")
+      fgLine = svg.selectAll("line#user")
         .data(arr);
 
       // enter the line 
@@ -268,11 +357,12 @@
       fgLine
         .attr({
           "x1" : 0, 
-          "y1" : 12,
+          "y1" : 31,
           "x2" : 0, 
-          "y2" : 35, 
+          "y2" : 54, 
           "stroke" : "black",
-          "stroke-width" : 1
+          "stroke-width" : 1,
+          "id" : "user"
         })
         .transition()
         .duration(1000)
@@ -286,7 +376,7 @@
         });
 
       // select the label holding the user's bribe input amount
-      fgLabel = svg.selectAll("text.avg")
+      fgLabel = svg.selectAll("text.myBribe")
         .data(arr);
 
       // enter the label
@@ -302,10 +392,10 @@
           return "My bribe";
         })
         .attr({
-          "y" : 48,
+          "y" : 65,
           "x" : 0,
           "text-anchor" : "middle",
-          "class" : "avg"
+          "class" : "myBribe"
         })
         .transition()
         .duration(1000)
@@ -338,7 +428,6 @@
           "text-anchor" : "end"
         });
 
-      
     }
 
     update();
@@ -369,7 +458,42 @@
     bgRect
       .attr("width", width);
 
-    // adjust the foreground rect size
+     // adjust the background rect label 
+    bgMaxLabel 
+      .attr({
+        "x" : width
+      });
+
+
+    // adjust the average rect size
+    avgRect
+      .attr({
+        "width": function(d) {
+          return xScale(d);
+        } 
+      });
+
+    // adjust the average line
+    avgRectLine
+      .attr({
+        "x1" : function(d) {
+          return xScale(d);
+        }, 
+        "x2" : function(d) {
+          return xScale(d);
+        } 
+      });
+
+    // adjust the average label 
+
+    avgRectLabel 
+      .attr({
+        "x" : function(d) {
+          return xScale(d);
+        }
+      });
+
+    // adjust the foreground (user) rect size
     fgRect
       .attr({
         "width": function(d) {
@@ -377,7 +501,7 @@
         }
       });
 
-    // adjust the foreground rect label 
+    // adjust the foreground (user) rect label 
     fgLine
       .attr({
         "x1" : function(d) {
@@ -388,14 +512,7 @@
         } 
       });
 
-
-    // adjust the background rect label 
-    bgMaxLabel 
-      .attr({
-        "x" : width
-      });
-
-    // adjust the foreground rect label
+    // adjust the foreground (user) rect label
     fgLabel
       .attr({
         "x" : function(d) {
