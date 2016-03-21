@@ -108,6 +108,12 @@
     });    
   }
 
+  function preventVis(userAmount, minBribeAmount, maxBribeAmount) {
+    // if useramount less than or more thanthe min or max amount for the bribe, 
+    // write the amount by which it is less to the ui
+    // prevent form submission and get the user to submit to SED. 
+  }
+
   // INFO FUNCTIONS to update the explanation section ------------- 
 
   function updateInfoDiv(userAmount, procedure, avg, min, max) {
