@@ -95,7 +95,14 @@
       var selectedProcedure = select.options[select.selectedIndex].value;
       var input = document.getElementById("bribeInputControl");
       userBribeAmout = input.value; 
-      return (input.value > 0) ? visualise(selectedProcedure,userBribeAmout) : alert("Please enter the bribe you had to pay.");
+
+        if(preventVis(selectedProcedure, userBribeAmout) === false) {
+          return (input.value > 0) ? visualise(selectedProcedure,userBribeAmout) : alert("Please enter the bribe you had to pay.");
+        }
+        else {
+          contactSED();
+        }
+    
     });
     submit.addEventListener("keydown", function (event) {
       var select = document.getElementById("bribeSelector");
@@ -103,15 +110,34 @@
       userBribeAmout = input.value; 
       var key = event.which || event.keyCode;
       if ((key === 13) || (key === 32)) {
-        return (input.value > 0) ? visualise(selectedProcedure,userBribeAmout) : alert("Please enter the bribe you had to pay.");
-      }
+
+        if(preventVis(selectedProcedure, userBribeAmout) === false) {
+          return (input.value > 0) ? visualise(selectedProcedure,userBribeAmout) : alert("Please enter the bribe you had to pay.");
+        }
+        else {
+          contactSED();
+        }
+       }
     });    
   }
 
-  function preventVis(userAmount, minBribeAmount, maxBribeAmount) {
-    // if useramount less than or more thanthe min or max amount for the bribe, 
-    // write the amount by which it is less to the ui
-    // prevent form submission and get the user to submit to SED. 
+  function preventVis(procedure, userAmount) {
+    for(var i = 0; i < spreadsheet.length; i++) {
+      if(spreadsheet[i].Procedure === procedure) {
+       
+        if( (parseInt(spreadsheet[i]["Max Bribes"]) < userAmount ) ) {
+          return true; 
+        }
+        if( (parseInt(spreadsheet[i]["Min Bribes"]) > userAmount )) {
+          return true; 
+        }
+        else return false; 
+      }
+    }
+  }
+
+  function contactSED() {
+    alert("Looks like we don't have data matching the bribe you paid. Contact SED with the details of your bribe.");
   }
 
   // INFO FUNCTIONS to update the explanation section ------------- 
