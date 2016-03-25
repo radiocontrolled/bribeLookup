@@ -12,8 +12,5 @@ This tool is based on data collected by Sakker el Dekkene (SED), a Lebanese non 
 <br/>
 
 ### To-do
-* Range error handling (preventVis function)
-** If entered lower than min amount or higher than max amount, present the submit button
 * highlight bug if equal amount
-* add a light (default) background?
 * share button?

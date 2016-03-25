@@ -137,12 +137,22 @@
   }
 
   function contactSED() {
-    alert("Looks like we don't have data matching the bribe you paid. Contact SED with the details of your bribe.");
+    var contact = document.getElementById("contactSed");
+    var info = document.getElementById("info");
+    var main = document.getElementById("main");
+    contact.style.display = "block";
+  
+    // is info div visible? 
+    if(info.style.display == "block") {
+      info.style.display = "none";
+      main.style.display = "none";
+    }
   }
 
   // INFO FUNCTIONS to update the explanation section ------------- 
 
   function updateInfoDiv(userAmount, procedure, avg, min, max) {
+    var contact = document.getElementById("contactSed");
     var userAmountSpan = document.getElementById("userAmount");
     var userAmountProcedure = document.getElementById("userProcedure");
     var dataAverageBribe = document.getElementById("dataAvgBribe");
@@ -158,6 +168,13 @@
     dataAverageBribe.innerHTML = avg + "LBP";
     informationAmount.innerHTML = calc.amount; 
     lessGreaterEqual.innerHTML = calc.lge; 
+
+
+    // is contactSED visible? 
+    if(contact.style.display == "block") {
+      contact.style.display = "none";
+    }
+
     info.style.display = "block";
 
   }
@@ -226,6 +243,11 @@
   }
 
   function visualise(procedure, userAmount) {
+
+    var main = document.getElementById("main");
+    if(main.style.display == "none") {
+      main.style.display = "block";
+    }
 
     var average = [];
     var arr = [];
