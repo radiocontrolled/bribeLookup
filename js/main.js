@@ -16,19 +16,39 @@
     "y" : 25
   };
 
-  // REQUEST CSV ------------- 
 
-  function requestData() {
-    d3.csv("data/data.csv", function(data){
-      spreadsheet = data;
-      createSelect();
-      populateSelect(spreadsheet);
-      createInput();
-      createSubmit();
-      attachSubmitEventListners();
+  // REQUEST DATA (Tabletop) ------------- 
+
+  function init() {
+    Tabletop.init({ 
+      key: '1xxfpA7qNZH7URp-wGO2iPAZaNzcvFvOXjmF0LK4Lji4',
+      callback: function(data, tabletop) { 
+        spreadsheet = data;
+        createSelect();
+        populateSelect(spreadsheet);
+        createInput();
+        createSubmit();
+        attachSubmitEventListners();
+      },
+      simpleSheet: true 
     });
   }
-  requestData();
+
+  init(); 
+
+  // REQUEST CSV ------------- 
+
+  // function requestData() {
+  //   d3.csv("data/data.csv", function(data){
+  //     spreadsheet = data;
+  //     createSelect();
+  //     populateSelect(spreadsheet);
+  //     createInput();
+  //     createSubmit();
+  //     attachSubmitEventListners();
+  //   });
+  // }
+  // requestData();
 
   // UI BUILDER FUNCTIONS ------------- 
 
