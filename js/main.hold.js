@@ -4,11 +4,7 @@
 
   // GLOBAL to APPLICATION VARIABLES ------------- 
   var height, width, svg, spreadsheet, min, max, avg, xScale, userBribeAmout, bgRect, fgRect, svgExistsInDOM = false, 
-  visInit = false, bgMinLabel, bgMaxLabel, fgLabel, fgLine, avgRect, avgRectLine, avgRectLabel; 
-
-  //showRange
-  var showRangeRect; 
-
+  visInit = false, bgMinLabel, bgMaxLabel, fgLabel, fgLine, avgRect, avgRectLine, avgRectLabel, showRangeRectangle;
 
   var rectOpts = {
     "x": 0, 
@@ -34,8 +30,6 @@
         createSubmit();
         attachSubmitEventListners();
         showRange();
-        var select = document.getElementById("bribeSelector");
-        select.addEventListener("change", showRange);
       },
       simpleSheet: true 
     });
@@ -232,7 +226,7 @@
 
   // VISUALISATION FUNCTIONS ------------- 
 
- function getViewportDimensions() { 
+  function getViewportDimensions() { 
     width = document.getElementById("main").offsetWidth * 0.90;
     height = window.innerHeight * 0.15;
   }
@@ -257,96 +251,6 @@
       });
   }
 
-  
-
-  function showRange() {
- 
-    
-    var showRangeAvg, showRangeMin, showRangeMax;
-
-    var select = document.getElementById("bribeSelector");
-
-    getAverageMinAndMax(); 
-    drawSvg();
-    drawShowRangeRect(); 
-
-    function getAverageMinAndMax() {
-      for(var i = 0; i < spreadsheet.length; i++) {
-        if(spreadsheet[i].Procedure === select.value) {
-          showRangeMin = spreadsheet[i]["Min Bribes"]; 
-          showRangeMax = spreadsheet[i]["Max Bribes"];
-          showRangeAvg = spreadsheet[i]["Avg Bribes"];
-        }
-      }
-    }
-
-    function drawShowRangeRect () {
-      if(visInit === false) {
-        backgroundRect();
-        bgMinLabel = svg.append("text");
-        bgMaxLabel = svg.append("g")
-          .classed("end", "true")
-          .append("text");
-        visInit = true;
-      }
-      
-    }
-
-    // Background Bars Labels ------------- 
-
-    bgMinLabel
-      .text(function(){
-        return showRangeMin;
-      })
-      .attr(labelOpts)
-      .attr({
-        "x" : 0
-      });
-
-    bgMaxLabel
-      .text(function(){
-        return showRangeMax;
-      })
-      .attr(labelOpts)
-      .attr({
-        "x" : width, 
-        "text-anchor" : "end"
-      });
-
-    // if the foreground rect, myBribe, and Average bribe and #info section are visible, hide them
-
-    // if the #info section is visible, hide it.
-    var info = document.getElementById("info");
-    if(info.style.display == "block") {
-      info.style.display = "none";
-    }
-
-    // if the foreground rect is visible, hide it
-    var foreground = d3.select("#foreground");
-    foreground.attr("display","none");
-
-    // if "My Bribe" text is visible, hide it
-    var myBribe = d3.select("#my-bribe");
-    myBribe.attr("display","none");
-
-    // if "My Bribe" line is visible, hide it
-    var myBribeLine = d3.select("#user");
-    myBribeLine.attr("display","none");
-
-    // if "Average" bribe text is visible, hide it
-    var avgBribeLabel = d3.select("#bribeAverageLabel");
-    avgBribeLabel.attr("display","none");
-
-    // if "Average" bribe label line is visible, hide it.
-    var avgBribeLine = d3.select("#avgLine");
-    avgBribeLine.attr("display","none");
-
-    // if "Average" rect is visible, hide it
-    var averageRect = d3.select("#average");
-    averageRect.attr("display","none");
-
-  }
-
   // draw the bgRect
   function backgroundRect() {
     bgRect = svg.append("rect")
@@ -356,7 +260,65 @@
         "fill" : "#989798",
       })
       .attr(rectOpts);
-    // visInit = true;
+    visInit = true;
+  }
+
+  function showRange() {
+
+    // we may need to draw the labels in this function instead of within visualise..
+
+    var min, max, avg;
+    var getDropdown = document.getElementById("bribeSelector");
+    var average = [];
+    var arr = [];
+
+    for(var i = 0; i < spreadsheet.length; i++) {
+      if(spreadsheet[i].Procedure === getDropdown.value) {
+        min = spreadsheet[i]["Min Bribes"]; 
+        max = spreadsheet[i]["Max Bribes"];
+        avg = spreadsheet[i]["Avg Bribes"];   
+      }
+    }
+
+    xScale = d3.scale.linear()
+      .domain([min, max])
+      .range([0, width]);
+
+    drawSvg();
+
+    showRangeRectangle = svg.append("rect")
+      .attr({
+        "id": "showRangeRect",
+        "width": width, 
+        "fill" : "#989798",
+      })
+      .attr(rectOpts);
+
+    bgMinLabel = svg.append("text");
+    bgMaxLabel = svg.append("g")
+      .classed("end", "true")
+      .append("text");
+
+    bgMinLabel
+      .text(function(){
+        return min;
+      })
+      .attr(labelOpts)
+      .attr({
+        "x" : 0
+      });
+
+    bgMaxLabel
+      .text(function(){
+        return max;
+      })
+      .attr(labelOpts)
+      .attr({
+        "x" : width, 
+        "text-anchor" : "end"
+      });
+
+
   }
 
   function visualise(procedure, userAmount) {
@@ -380,9 +342,7 @@
     average.push(parseInt(avg));
     arr.push(parseInt(userAmount));
 
-    // this can be called in showRange, 
-    // because showRange will display before the visualisation can happen.
-    // drawSvg();
+    drawSvg();
      
    
     xScale = d3.scale.linear()
@@ -391,16 +351,14 @@
 
 
     // append the background rect if it's not in the DOM
-    // if(visInit === false) {
-    //   backgroundRect();
+    if(visInit === false) {
+      backgroundRect();
 
-      // bgMinLabel = svg.append("text");
-      // bgMaxLabel = svg.append("g")
-      //   .classed("end", "true")
-      //   .append("text");
-    // }
-
-       
+      bgMinLabel = svg.append("text");
+      bgMaxLabel = svg.append("g")
+        .classed("end", "true")
+        .append("text");
+    }
 
     function update() {
 
@@ -419,8 +377,7 @@
         .attr({
           "id" : "average",
           "width" : 0, 
-          "fill" : "#d91f2b",
-          "display" : "block"
+          "fill" : "#d91f2b"
         })
         .transition()
         .duration(1000)
@@ -447,8 +404,7 @@
           "y2" : 36, 
           "stroke" : "#d91f2b",
           "stroke-width" : 1, 
-          "id" : "avgLine",
-          "display" : "block"
+          "id" : "avgLine"
         })
         .transition()
         .duration(1000)
@@ -481,9 +437,7 @@
           "x" : 0,
           // "fill" : "#d91f2b",
           "text-anchor" : "middle",
-          "class" : "bribeAverage",
-          "id" : "bribeAverageLabel",
-          "display" : "block"
+          "class" : "bribeAverage"
         })
         .transition()
         .duration(1000)
@@ -510,8 +464,7 @@
         .attr({
           "fill" : "fff",
           "id" : "foreground",
-          "width" : 0,
-          "display" : "block"
+          "width" : 0
         })
         .transition()
         .duration(1000)
@@ -540,8 +493,7 @@
           "y2" : 54, 
           "stroke" : "black",
           "stroke-width" : 1,
-          "id" : "user", 
-          "display" : "block"
+          "id" : "user"
         })
         .transition()
         .duration(1000)
@@ -574,9 +526,7 @@
           "y" : 65,
           "x" : 0,
           "text-anchor" : "middle",
-          "class" : "myBribe",
-          "id" : "my-bribe",
-          "display" : "block"
+          "class" : "myBribe"
         })
         .transition()
         .duration(1000)
@@ -588,7 +538,7 @@
 
 
 
-       // // Background Bars Labels ------------- 
+       // Background Bars Labels ------------- 
 
        // bgMinLabel
        //  .text(function(){
@@ -628,18 +578,11 @@
 
   function resize() {
 
+    // showRangeRect ...
+    d3.select("#showRangeRect").style("display","none");
+
     getViewportDimensions();
     setSvgSize();
-
-    d3.select("#background")
-       .attr("width", width);
-
-  // adjust the background rect label 
-    console.log(bgMaxLabel);
-    bgMaxLabel 
-      .attr({
-        "x" : width
-      });
 
     // adjust the rect scale
     xScale 
@@ -649,6 +592,11 @@
     bgRect
       .attr("width", width);
 
+     // adjust the background rect label 
+    bgMaxLabel 
+      .attr({
+        "x" : width
+      });
 
 
     // adjust the average rect size
