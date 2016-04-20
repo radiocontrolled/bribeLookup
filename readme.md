@@ -14,14 +14,3 @@ This tool is based on data collected by Sakker el Dekkene (SED), a Lebanese non 
 ## The Data
 https://docs.google.com/spreadsheets/d/1xxfpA7qNZH7URp-wGO2iPAZaNzcvFvOXjmF0LK4Lji4/pubhtml
 
-### To-do
-* highlight bug if equal amount
-* share button?
-
-
-showRange() ...
-
-function that is called every time the value of the select option changes. 
-- show the rect, min and max 
-- when select option values change, the min and max need to be updated
-- when visualise if called, the rectangle/values created with showRange should be removed from the DOM. 
