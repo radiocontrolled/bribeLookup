@@ -228,6 +228,11 @@
     return obj; 
     
   }
+
+  function setTitle(titleToSet) {
+    var title = document.getElementById("title");
+    title.innerHTML = titleToSet;
+  }
   
 
   // VISUALISATION FUNCTIONS ------------- 
@@ -291,6 +296,8 @@
       }
       
     }
+
+    setTitle(select.value);
 
     // Background Bars Labels ------------- 
 
