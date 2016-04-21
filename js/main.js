@@ -8,7 +8,7 @@
 
   //showRange
   var showRangeRect; 
-
+  var article = "";
 
   var rectOpts = {
     "x": 0, 
@@ -84,6 +84,16 @@
     main.appendChild(label);
   }
 
+  function validate() {
+    var input = document.getElementById("bribeInputControl");
+    if(isNAN(input.value)) {
+      alert("Please enter a figure in Lebanese pounds");
+      return false; 
+    }
+    else {
+      return true;
+    }
+  }
   
   function createInput() {
     
@@ -149,6 +159,7 @@
   }
 
   function preventVis(procedure, userAmount) {
+
     for(var i = 0; i < spreadsheet.length; i++) {
       if(spreadsheet[i].Procedure === procedure) {
        
@@ -158,6 +169,7 @@
         if( (parseInt(spreadsheet[i]["Min Bribes"]) > userAmount )) {
           return true; 
         }
+ 
         else return false; 
       }
     }
@@ -186,15 +198,18 @@
     var informationAmount = document.getElementById("infoAmount");
     var lessGreaterEqual = document.getElementById("lessThanMoreThan");
     var info = document.getElementById("info");
+    var grammarSpan = document.getElementById("grammar");
 
   
     var calc = calculate(userAmount, avg);
+    chooseArticle();
 
     userAmountSpan.innerHTML = userAmount + "LBP";
     userAmountProcedure.innerHTML = procedure;
     dataAverageBribe.innerHTML = avg + "LBP";
     informationAmount.innerHTML = calc.amount; 
     lessGreaterEqual.innerHTML = calc.lge; 
+    grammarSpan.innerHTML = article + " ";
 
 
     // is contactSED visible? 
@@ -203,6 +218,21 @@
     }
 
     info.style.display = "block";
+
+  }
+
+  function chooseArticle() {
+    var select = document.getElementById("bribeSelector");
+
+    function getArticle() {
+      for(var i = 0; i < spreadsheet.length; i++) {
+        if(spreadsheet[i].Procedure === select.value) {
+          article = spreadsheet[i].Article; 
+        }
+      }
+    }
+
+    getArticle();
 
   }
 
