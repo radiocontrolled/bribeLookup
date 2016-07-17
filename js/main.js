@@ -10,6 +10,8 @@
   var showRangeRect; 
   var article = "";
 
+  var format = d3.format("0,000");
+
   var rectOpts = {
     "x": 0, 
     "y" : 31,
@@ -204,9 +206,9 @@
     var calc = calculate(userAmount, avg);
     chooseArticle();
 
-    userAmountSpan.innerHTML = userAmount + "LBP";
+    userAmountSpan.innerHTML = format(userAmount) + "LBP";
     userAmountProcedure.innerHTML = procedure;
-    dataAverageBribe.innerHTML = avg + "LBP";
+    dataAverageBribe.innerHTML = format(avg) + "LBP";
     informationAmount.innerHTML = calc.amount; 
     lessGreaterEqual.innerHTML = calc.lge; 
     grammarSpan.innerHTML = article + " ";
@@ -236,23 +238,36 @@
 
   }
 
+  function infoSpanEqual() {
+    var span = document.getElementById("infoAmount");
+    span.style.padding = 0; 
+  }
+
+  function infoSpanNotEqual() {
+    var span = document.getElementById("infoAmount");
+    span.style.padding = "0 0.25em";
+  }
+
   function calculate(userAmount, avg) {
 
     var obj = {};
 
     if(userAmount > avg) {
       obj.lge = "greater than "; 
-      obj.amount = userAmount - avg + "LBP";
+      obj.amount = format(userAmount - avg) + "LBP";
+      infoSpanNotEqual();
     }
     
     else if(userAmount < avg) {
       obj.lge = "less than "; 
-      obj.amount = avg - userAmount + "LBP";
+      obj.amount = format(avg - userAmount) + "LBP";
+      infoSpanNotEqual();
     }
 
     else {
       obj.lge = "equal to";
       obj.amount = "";
+      infoSpanEqual();
     }
 
     return obj; 
@@ -333,16 +348,18 @@
 
     bgMinLabel
       .text(function(){
-        return showRangeMin;
+        return format(showRangeMin);
       })
       .attr(labelOpts)
       .attr({
         "x" : 0
       });
 
+    
+
     bgMaxLabel
       .text(function(){
-        return showRangeMax;
+        return format(showRangeMax);
       })
       .attr(labelOpts)
       .attr({
